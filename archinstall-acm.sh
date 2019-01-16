@@ -69,18 +69,6 @@ ADMIN_ONLY_ACCESS=1
 
 function partition_disk {
 
-if [ "$ENABLE_RAID1" = "1"]
-then
-    # HOOKS=(base udev autodetect modconf block filesystems keyboard fsck)
-    # HOOKS=(base udev autodetect modconf block mdadm_udev filesystems fsck)
-
-    # BINARIES=()
-    # BINARIES=(mdmon)
-    pacman -Sy mdadm --needed --noconfirm
-    # GRUB_PRELOAD_MODULES="part_gpt part_msdos"
-    # GRUB_PRELOAD_MODULES="part_gpt part_msdos mdraid09 mdraid1x"
-fi
-
 NVME_PART=''
 if [ "$NVME" = "1" ]
 then
@@ -128,7 +116,7 @@ fi
 
 function base_install {
 
-sed -i '1s/^/Server = http:\/\/mozart.acm.cs\/mirror\/archlinux\/$repo\/os\/$arch \n/' /etc/pacman.d/mirrorlist
+sed -i '1s/^/Server = http:\/\/bharat.acm.cs\/mirror\/archlinux\/$repo\/os\/$arch \n/' /etc/pacman.d/mirrorlist
 pacman -Syy
 
 timedatectl set-ntp true
@@ -210,7 +198,7 @@ cat << EOM > /etc/dhcpd.conf
 option domain-name "acm.cs";
 option domain-search "acm.cs";
 option domain-name-servers ad1.acm.cs, ad2.acm.cs, ad3.acm.cs, 8.8.8.8, 8.8.4.4;
-option ntp-servers mozart.acm.cs, dsk7.acm.cs;
+option ntp-servers bharat.acm.cs, lee.acm.cs;
 
 default-lease-time 600;
 max-lease-time 7200;
@@ -350,7 +338,7 @@ Include = /etc/pacman.d/mirrorlist
 
 [uicacm]
 SigLevel = Optional TrustAll
-Server = http://mozart.acm.cs/acm-packages/archlinux/
+Server = http://bharat.acm.cs/acm-packages/archlinux/
 EOM
 
 if [ "$DHCP_HOSTNAME" = "1" ]
