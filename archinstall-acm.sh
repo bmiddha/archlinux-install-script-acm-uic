@@ -1,5 +1,3 @@
-# ADD HYPERVISOR SUBNET FORWARD RULES
-
 #### BEGIN CONFIG ####
 
 # LDAP Secrets
@@ -177,7 +175,7 @@ fi
 }
 
 function install_hypervisor {
-pacman -Sy qemu virt-manager virt-viewer dnsmasq iptables vde2 bridge-utils openbsd-netcat iptables ebtables dhcp openssl dmidecode --noconfirm --needed
+pacman -Sy qemu virt-manager virt-viewer dnsmasq iptables vde2 bridge-utils openbsd-netcat iptables ebtables dhcp openssl dmidecode ovmf --noconfirm --needed
 
 cat << EOM > /root/acm_virt.xml
 <network>
@@ -190,6 +188,12 @@ cat << EOM > /root/acm_virt.xml
 <ip address='172.29.$HYPERVISOR_SUBNET.1' netmask='255.255.255.0'>
 </ip>
 </network>
+EOM
+
+cat << EOM >> /etc/libvirt/qemu.conf
+nvram = [
+    "/usr/share/ovmf/x64/OVMF_CODE.fd:/usr/share/ovmf/x64/OVMF_VARS.fd"
+]
 EOM
 
 systemctl enable libvirtd.service
