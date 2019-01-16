@@ -42,11 +42,6 @@ PRIMARY_NETWORK_INTERFACE=$BONDED_INTERFACES
 DISK=/dev/sda
 # is the install disk nvme?
 NVME=0
-# install on raid 1 (if raid is enabled, you do not need to fill out DISK and NVME)
-ENABLE_RAID1=0
-# list raid disks
-RAID_DISKS="/dev/sda /dev/sdb"
-
 
 # Install Cinnamon + LightDM [0/1]
 INSTALL_GUI=0
