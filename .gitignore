@@ -1,2 +1,3 @@
 configs/secrets.env
+ssh-keys/
 master.env

@@ -6,9 +6,10 @@ GLOBAL='configs/global.env'
 
 # Print script usage
 function usage {
-    echo "Usage: $0 --config <config> --host <ip/hostname>"
-    echo "      -c, --config            specify config file"
+    echo "Usage: $0 --profile <profile> --host <ip/hostname>"
+    echo "      -p, --profile           specify profile file"
     echo "      -h, --host              specify host"
+    echo "      -k, --key               ssh key file"
     echo "      --help                  Displays Help Information"
     echo "Example: $0 --config config/virtual-machine.env --host computer.example.com"
 }
@@ -27,13 +28,18 @@ do
 key="$1"
 
 case $key in
-    -c|--config)
-    CONFIG_FILE="$2"
+    -p|--profile)
+    PROFILE="$2"
     shift
     shift
     ;;
     -h|--host)
     SSH_HOST="$2"
+    shift
+    shift
+    ;;
+    -k|--key)
+    SSH_KEY="$2"
     shift
     shift
     ;;
@@ -56,7 +62,7 @@ cat $SECRETS >> master.env
 echo 1
 cat $GLOBAL >> master.env
 echo 2
-cat $CONFIG_FILE >> master.env
+cat $PROFILE >> master.env
 echo 3
 
 # Transfer master config and functions to remote host
@@ -64,7 +70,7 @@ scp master.env root@$SSH_HOST:/root/
 scp -r functions root@$SSH_HOST:/root/
 
 # Run install script on remote host
-ssh root@$SSH_HOST < archinstall-acm.sh
+ssh root@$SSH_HOST -i "$SSH_KEY" < archinstall-acm.sh
 
 # Remove master.env
 rm master.env
