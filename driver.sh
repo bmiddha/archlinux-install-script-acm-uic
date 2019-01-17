@@ -1,8 +1,7 @@
 #!/bin/bash
 
-SECRETS='config/secrets.env'
-GLOBAL='config/global.env'
-
+SECRETS='configs/secrets.env'
+GLOBAL='configs/global.env'
 
 function usage {
     echo "Usage: $0 --config <config> --host <ip/hostname>"
@@ -49,8 +48,19 @@ case $key in
 esac
 done
 
-export $SECRETS
-export $GLOBAL_CONFIG
-export $CONFIG_FILE
+echo "" > master.env
+cat $SECRETS >> master.env
+echo 1
+cat $GLOBAL >> master.env
+echo 2
+cat $CONFIG_FILE >> master.env
+echo 3
 
+scp master.env root@$SSH_HOST:/root/
+scp -r functions root@$SSH_HOST:/root/
 ssh root@$SSH_HOST < archinstall-acm.sh
+
+rm master.env
+echo -e "\n\n\nScript Ended\n\n\n"
+
+exit

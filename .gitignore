@@ -1,1 +1,2 @@
-secrets.env
+configs/secrets.env
+master.env
