@@ -1,64 +1,41 @@
-#### BEGIN CONFIG ####
-
-# LDAP Secrets
-ACM_BINDPW=
-ACM_ROOTBINDPW=
-
-
-# Admin Username
-ADMIN_USERNAME=acmadmin
-# Admin Password
-ADMIN_PASSWORD=""
-# Inject Key in root account
-ADMIN_KEY=""
+function usage {
+    echo "Usage: $0 --config <config>"
+    echo "      -c, --config            Specify Config File"
+    echo "      -h, --help              Displays Help Information"
+    echo "Example: $0 --config config/virtual-machine.env"
+}
 
 
-# Install UEFI Bootloader. Specify 0 for leagacy and 1 for UEFI
-INSTALL_UEFI=1
-# Swapfile size in MB
-SWAPSIZE=32768
-# grub menu timeout
-GRUB_TIMEOUT=0
-# Timezone
-TIMEZONE="America/Chicago"
-
-# Hostname
-HOSTNAME=chase
-# Hostname from dhcp
-DHCP_HOSTNAME=0
-# for netctl lan profile
-ETHERNET_INTERFACE=eno1
-# Enable bonded interface [0/1]
-ENABLE_BONDING=1
-# Bonded interface name
-BOND_INTERFACE=lbond0
-# Interfaces to bond. Format: bash array ( first second third )
-BONDED_INTERFACES='eno1 eno2 eno3 eno4'
-# Primary network interface. netctl profile will be enabled and this interface will be used to route the hypervisor subnet if hypervisor install is enabled.
-PRIMARY_NETWORK_INTERFACE=$BONDED_INTERFACES
+if [ $# -eq 0 ]
+  then
+    echo "No arguments supplied"
+    usage
+    exit
+fi
 
 
-# install disk /dev/sdx
-DISK=/dev/sda
-# is the install disk nvme?
-NVME=0
+while [[ $# -gt 0 ]]
+do
+key="$1"
 
-# Install Cinnamon + LightDM [0/1]
-INSTALL_GUI=0
-# Install additional applications [0/1]
-INSTALL_EXTRAAPPS=1
-# Specify apps from the official repositories. Separate with spaces.
-EXTRAAPPS="mdadm htop iotop"
-# Install aurman [0/1]
-INSTALL_AURMAN=1
-# Install hypervisor [0/1]
-INSTALL_HYPERVISOR=1
-# Subnet for hypervisor 172.29.xx.0/24. Specify xx.
-HYPERVISOR_SUBNET=24
-# Restrict access to AcmLanAdmins and local admins
-ADMIN_ONLY_ACCESS=1
-
-#### END CONFIG ####
+case $key in
+    -c|--config)
+    CONFIG_FILE="$2"
+    shift
+    shift
+    ;;
+    --help)
+    usage
+    exit
+    shift
+    ;;
+    *)
+    usage
+    exit
+    shift
+    ;;
+esac
+done
 
 function partition_disk {
 
@@ -539,6 +516,8 @@ config_sudoers
 EOF
 
 }
+
+export $CONFIG_FILE
 
 partition_disk
 base_install
