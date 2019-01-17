@@ -1,5 +1,12 @@
 function config_active_directory {
 
+# Exit function if CONFIGURE_ACTIVE_DIRECTORY is not set to 1
+if [ "$CONFIGURE_ACTIVE_DIRECTORY" -ne "1" ]
+then
+return
+fi
+
+# Configure kerbros
 cat << EOM > /etc/krb5.conf
 [libdefaults]
 default_realm = ACM.CS
@@ -16,6 +23,7 @@ acm.cs = ACM.CS
 #       kdc = CONSOLE
 EOM
 
+# Configure nslcd
 cat << EOM > /etc/nslcd.conf
 
 uri ldaps://ad3.acm.cs/
@@ -58,9 +66,10 @@ map    shadow shadowLastChange pwdLastSet
 filter group  (objectClass=group)
 
 EOM
-
+# Set permissions on nslcd.cong
 chmod 600 /etc/nslcd.conf
 
+# Configure nsswitch
 cat << EOM > /etc/nsswitch.conf
 passwd: files ldap [NOTFOUND=return]
 shadow: files ldap [NOTFOUND=return]
@@ -79,6 +88,7 @@ rpc: files
 netgroup: files
 EOM
 
+# Configure pam to auto-create home directories, use ldap to login, and use access.conf to regulate login access
 cat << EOM > /etc/pam.d/system-auth
 #%PAM-1.0
 
@@ -104,8 +114,10 @@ session   optional  pam_ldap.so
 session   optional  pam_permit.so
 EOM
 
+# Enable nslcd service
 systemctl enable nslcd
 
+# Configure admin only access
 if [ "$ADMIN_ONLY_ACCESS" = "1" ]
 then
 

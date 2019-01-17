@@ -1,5 +1,5 @@
+# Function to give sudo access to users, and groups
 function config_sudoers {
-rm /etc/sudoers.d/tempSudo
 
 cat << EOM > /etc/sudoers.d/AcmAdmins
 $ADMIN_USERNAME ALL=(ALL) ALL

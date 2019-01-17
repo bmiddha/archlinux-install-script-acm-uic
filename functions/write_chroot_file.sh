@@ -1,26 +1,21 @@
+# Function to write the setup script which will run in chroot.
 function write_chroot_file {
 
+# Overwrite old setup file (if exists)
 echo "" > /mnt/setup.sh
 
+# Append all chroot functions
 cat chroot-functions/*.sh >> /mnt/setup.sh
 
+# Run chroot-functions
 cat << EOF >> /mnt/setup.sh
 
 system_config
 network_config
 install_bootloader
 install_apps
-
-if [ "$CONFIGURE_ACTIVE_DIRECTORY" = "1" ]
-then
 config_active_directory
-fi
-
-if [ "$INSTALL_HYPERVISOR" = "1" ]
-then
 install_hypervisor
-fi
-
 config_sudoers
 
 

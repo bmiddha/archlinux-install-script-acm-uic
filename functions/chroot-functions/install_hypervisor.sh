@@ -1,6 +1,16 @@
+# Function to install and configre libvirtd
 function install_hypervisor {
+
+# Exit function if INSTALL_HYPERVISOR is not set to 1
+if [ "$INSTALL_HYPERVISOR" -ne "1" ]
+then
+    return
+fi
+
+# Install dependencies and the hypervisor
 pacman -Sy qemu virt-manager virt-viewer dnsmasq iptables vde2 bridge-utils openbsd-netcat iptables ebtables dhcp openssl dmidecode ovmf --noconfirm --needed
 
+# Configure virual network
 cat << EOM > /root/acm_virt.xml
 <network>
 <name>acm_virt</name>
@@ -14,12 +24,14 @@ cat << EOM > /root/acm_virt.xml
 </network>
 EOM
 
+# Configure UEFI on QEMU
 cat << EOM >> /etc/libvirt/qemu.conf
 nvram = [
     "/usr/share/ovmf/x64/OVMF_CODE.fd:/usr/share/ovmf/x64/OVMF_VARS.fd"
 ]
 EOM
 
+# Configure DHCP Servere for the virtual Network
 cat << EOM > /etc/dhcpd.conf
 option domain-name "acm.cs";
 option domain-search "acm.cs";
@@ -48,6 +60,7 @@ ignore unknown-clients;
 }
 EOM
 
+# Configure routing tables to route traffic between the virtual and physical network
 cat << EOM > /etc/iptables/iptables.rules
 *nat
 :POSTROUTING ACCEPT [0:0]
@@ -66,6 +79,12 @@ COMMIT
 COMMIT
 EOM
 
+# Temporary sudo file to install trousers from AUR
+cat << EOM > /etc/sudoers.d/tempSudo
+$ADMIN_USERNAME ALL=(ALL) NOPASSWD:ALL
+EOM
+
+# Install Trousers for TPM support
 cat << EOM > /tmp/trousers.sh
 
 cd /tmp
@@ -73,10 +92,10 @@ git clone https://aur.archlinux.org/trousers.git
 cd trousers
 makepkg PKGBUILD --skippgpcheck --syncdeps --install --noconfirm --needed
 cd ..
-rm -rf trousers
 
 EOM
 
+# Start virtual network and dhcp server on next boot
 cat << EOM > /root/hypervisor_setup_helper.sh
 sleep 30
 
@@ -99,6 +118,7 @@ rm /root/hypervisor_setup_helper.sh
 wall "Hypervisor setup helper completed"
 EOM
 
+# Oneshot service to run the helper script
 cat << EOM > /usr/lib/systemd/system/arch-install-hypervisor.service
 [Unit]
 Description=Service to define libvirt networks after hypervisor install.
@@ -112,7 +132,7 @@ ExecStart=/usr/bin/env bash "/root/hypervisor_setup_helper.sh"
 WantedBy=multi-user.target
 EOM
 
-
+# Polkit rules to allow admins to access libvirt
 cat << EOM > /etc/polkit-1/rules.d/50-libvirt.rules
 polkit.addRule(function(action, subject) {
 if (action.id == "org.libvirt.unix.manage" &&
@@ -129,9 +149,15 @@ return polkit.Result.YES;
 });
 EOM
 
+# Enalbel Libvirt Service
 systemctl enable libvirtd.service
+# Run trousers install script
 ( su - $ADMIN_USERNAME -c "bash /tmp/trousers.sh" )
-rm -r /tmp/trousers.sh
+# Delete trouser srource and install script
+rm -r /tmp/trousers.sh /tmp/trousers
+# Remove temporary sudo acccess
+rm /etc/sudoers.d/tempSudo
+# Enable the oneshot helper scirpt service
 systemctl enable arch-install-hypervisor.service
 
 }

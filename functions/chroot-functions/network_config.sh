@@ -1,15 +1,20 @@
+# Function to configre netctl and bonding
 function network_config {
+
+# Get hostname from dhcp
 if [ "$DHCP_HOSTNAME" = "1" ]
 then
 echo "env force_hostname=YES" >> /etc/dhcpcd.conf
 fi
 
+# Confiure lan netctl profile
 cat << EOM > /etc/netctl/lan
 Interface=$ETHERNET_INTERFACE
 Connection=ethernet
 IP=dhcp
 EOM
 
+# Configure bonding netctl profile
 if [ "$ENABLE_BONDING" = "1" ]
 then
 

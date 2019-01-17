@@ -1,6 +1,16 @@
+# Function to install applications specified, and aurman and configure lightdm and cinnamon
 function install_apps {
+
+# Insatll and configure aurman
 if [ "$INSTALL_AURMAN" = "1" ]
 then
+
+# Configure temporary sudo access
+cat << EOM > /etc/sudoers.d/tempSudo
+$ADMIN_USERNAME ALL=(ALL) NOPASSWD:ALL
+EOM
+
+# Insatll aurman
 cat << EOB > /tmp/aurman.sh
 cd ~
 mkdir -p /tmp/aurman_install
@@ -13,9 +23,13 @@ makepkg PKGBUILD --skippgpcheck --syncdeps --install --noconfirm --needed
 rm -rf aurman_install
 EOB
 ( su - $ADMIN_USERNAME -c "bash /tmp/aurman.sh" )
-rm -r /tmp/aurman.sh
 
+# Cleanup
+rm /etc/sudoers.d/tempSudo
+rm -r /tmp/aurman.sh
 fi
+
+# Install and confgire lightdm and cinnamon
 if [ "$INSTALL_GUI" = "1" ]
 then
 pacman -Sy xorg cinnamon lightdm lightdm-gtk-greeter --noconfirm --needed
@@ -32,8 +46,19 @@ session-wrapper=/etc/lightdm/Xsession
 EOM
 systemctl enable lightdm
 fi
+
+# Install extra apps
 if [ "$INSTALL_EXTRAAPPS" = "1" ]
 then
+if [ "$INSTALL_AURMAN" = "1" ]
+then
+cat << EOM > /etc/sudoers.d/tempSudo
+$ADMIN_USERNAME ALL=(ALL) NOPASSWD:ALL
+EOM
+aurman -Sy $EXTRAAPPS --noconfirm --needed
+else
 pacman -Sy $EXTRAAPPS --noconfirm --needed
 fi
+fi
+
 }
