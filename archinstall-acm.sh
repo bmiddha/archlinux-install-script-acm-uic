@@ -1,41 +1,4 @@
-function usage {
-    echo "Usage: $0 --config <config>"
-    echo "      -c, --config            Specify Config File"
-    echo "      -h, --help              Displays Help Information"
-    echo "Example: $0 --config config/virtual-machine.env"
-}
-
-
-if [ $# -eq 0 ]
-  then
-    echo "No arguments supplied"
-    usage
-    exit
-fi
-
-
-while [[ $# -gt 0 ]]
-do
-key="$1"
-
-case $key in
-    -c|--config)
-    CONFIG_FILE="$2"
-    shift
-    shift
-    ;;
-    --help)
-    usage
-    exit
-    shift
-    ;;
-    *)
-    usage
-    exit
-    shift
-    ;;
-esac
-done
+#!/bin/bash
 
 function partition_disk {
 
@@ -86,7 +49,7 @@ fi
 
 function base_install {
 
-sed -i '1s/^/Server = http:\/\/bharat.acm.cs\/mirror\/archlinux\/$repo\/os\/$arch \n/' /etc/pacman.d/mirrorlist
+sed -i '1s/^/Server = $MIRROR \n/' /etc/pacman.d/mirrorlist
 pacman -Syy
 
 timedatectl set-ntp true
@@ -516,8 +479,6 @@ config_sudoers
 EOF
 
 }
-
-export $CONFIG_FILE
 
 partition_disk
 base_install
