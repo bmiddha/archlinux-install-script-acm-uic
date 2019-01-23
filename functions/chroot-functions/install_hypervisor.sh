@@ -8,7 +8,7 @@ then
 fi
 
 # Install dependencies and the hypervisor
-pacman -Sy qemu virt-manager virt-viewer dnsmasq iptables vde2 bridge-utils openbsd-netcat iptables ebtables dhcp openssl dmidecode ovmf --noconfirm --needed
+pacman -Sy qemu dnsmasq iptables vde2 bridge-utils openbsd-netcat iptables ebtables dhcp openssl dmidecode ovmf --noconfirm --needed
 
 # Configure virual network
 cat << EOM > /root/acm_virt.xml
@@ -84,12 +84,16 @@ cat << EOM > /etc/sudoers.d/tempSudo
 $ADMIN_USERNAME ALL=(ALL) NOPASSWD:ALL
 EOM
 
-# Install Trousers for TPM support
-cat << EOM > /tmp/trousers.sh
+# Install Trousers for TPM support and virtio drivers for windows guests
+cat << EOM > /tmp/hypervisor-aur.sh
 
 cd /tmp
 git clone https://aur.archlinux.org/trousers.git
 cd trousers
+makepkg PKGBUILD --skippgpcheck --syncdeps --install --noconfirm --needed
+cd ..
+git clone https://aur.archlinux.org/virtio-win.git
+cd virtio-win
 makepkg PKGBUILD --skippgpcheck --syncdeps --install --noconfirm --needed
 cd ..
 
@@ -152,9 +156,9 @@ EOM
 # Enalbel Libvirt Service
 systemctl enable libvirtd.service
 # Run trousers install script
-( su - $ADMIN_USERNAME -c "bash /tmp/trousers.sh" )
+( su - $ADMIN_USERNAME -c "bash /tmp/hypervisor-aur.sh" )
 # Delete trouser srource and install script
-rm -r /tmp/trousers.sh /tmp/trousers
+rm -r /tmp/hypervisor-aur.sh /tmp/hypervisor-aur
 # Remove temporary sudo acccess
 rm /etc/sudoers.d/tempSudo
 # Enable the oneshot helper scirpt service
