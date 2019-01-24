@@ -3,8 +3,10 @@ function config_active_directory {
 # Exit function if CONFIGURE_ACTIVE_DIRECTORY is not set to 1
 if [ "$CONFIGURE_ACTIVE_DIRECTORY" -ne "1" ]
 then
-return
+    return
 fi
+
+pacman -Sy nss-pam-ldapd krb5 pam-krb5 --noconfirm --needed
 
 # Configure kerbros
 cat << EOM > /etc/krb5.conf

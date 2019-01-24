@@ -2,8 +2,7 @@
 function base_install {
 
 # Set pacman mirror
-sed -i '1s/^/Server = $MIRROR \n/' /etc/pacman.d/mirrorlist
-
+echo -e "Server = $MIRROR\nServer = "'https://mirrors.lug.mtu.edu/archlinux/$repo/os/$arch' | cat - /etc/pacman.d/mirrorlist > temp && mv temp /etc/pacman.d/mirrorlist
 # Update package list
 pacman -Syy
 
@@ -11,7 +10,7 @@ pacman -Syy
 timedatectl set-ntp true
 
 # Install archlinux
-pacstrap /mnt base base-devel grub os-prober $BOOTLOADER_UEFI_PACKAGES ntfs-3g exfat-utils git vim tmux wget curl nfs-utils openssh intel-ucode bash-completion nss-pam-ldapd krb5 pam-krb5
+pacstrap /mnt base base-devel grub os-prober $BOOTLOADER_UEFI_PACKAGES ntfs-3g exfat-utils git vim tmux wget curl nfs-utils openssh intel-ucode bash-completion
 
 # Generate fstab file
 genfstab -U /mnt >> /mnt/etc/fstab

@@ -10,7 +10,7 @@ hwclock --systohc
 echo LANG=$LOCALE > /etc/locale.conf
 export LANG=$LOCALE
 
-sed -i '1s/^/$LOCALE\n/' /etc/locale.gen
+echo -e "$LOCALE" | cat - /etc/locale.gen > temp && mv temp /etc/locale.gen
 
 locale-gen
 
