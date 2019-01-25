@@ -8,7 +8,7 @@ echo "/swapfile       	none      	swap      	defaults,pri=-2	0 0" >> /etc/fstab
 ln -sf /usr/share/zoneinfo/$TIMEZONE /etc/localtime
 hwclock --systohc
 echo LANG=$LOCALE > /etc/locale.conf
-export LANG=$LOCALE
+export LANG=$LANG
 
 echo -e "$LOCALE" | cat - /etc/locale.gen > temp && mv temp /etc/locale.gen
 

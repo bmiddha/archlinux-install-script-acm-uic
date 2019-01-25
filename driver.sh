@@ -68,6 +68,14 @@ echo "" >> master.env
 echo > master.sh
 cat functions/*.sh  >> master.sh
 
+# Remove remote host from known-hosts file
+ssh-keygen -R $SSH_HOST
+
+# Copy ssh keys to remote host
+if [ $SSH_KEY ]
+then
+ssh-copy-id -i $SSH_KEY root@$SSH_HOST
+fi
 
 echo "Transferring config files to remote host"
 # Transfer master config and functions to remote host
@@ -76,8 +84,12 @@ scp -r master.env master.sh functions/chroot-functions root@$SSH_HOST:/root/
 
 echo "Running script on remote host"
 # Run install script on remote host
-ssh root@$SSH_HOST -i "$SSH_KEY" < archinstall-acm.sh
-
+if [ $SSH_KEY ]
+then
+ssh -oStrictHostKeyChecking=no root@$SSH_HOST -i $SSH_KEY < archinstall-acm.sh
+else
+ssh -oStrictHostKeyChecking=no root@$SSH_HOST < archinstall-acm.sh
+fi
 # Remove master.env
 rm master.env master.sh
 
