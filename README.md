@@ -74,6 +74,7 @@ Here is an outline of the workings of the script
     - Set bootloader timeout to 0
     - Install and configure GRUB
 ## archiso customizations
+Using the `releng` profile from `/usr/share/archiso/configs/releng`
 `airootfs/root/customize_airootfs.sh`
 ```bash
 systemctl enable sshd
