@@ -73,3 +73,9 @@ Here is an outline of the workings of the script
   - Install Bootloader
     - Set bootloader timeout to 0
     - Install and configure GRUB
+## archiso customizations
+`airootfs/root/customize_airootfs.sh`
+```bash
+systemctl enable sshd
+echo "root:superPASSWORD" | chpasswd
+```
