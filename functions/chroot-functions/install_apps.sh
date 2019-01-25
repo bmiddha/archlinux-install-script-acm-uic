@@ -2,7 +2,7 @@
 function install_apps {
 
 # Insatll and configure aurman
-if [ "$INSTALL_AURMAN" = "1" ]
+if [ "$INSTALL_AURMAN" -eq "1" ]
 then
 
 # Configure temporary sudo access
@@ -15,9 +15,7 @@ cat << EOB > /tmp/aurman.sh
 cd ~
 mkdir -p /tmp/aurman_install
 cd /tmp/aurman_install
-sudo pacman -Sy binutils make gcc fakeroot pkg-config git python python-feedparser python-dateutil python-regex python-requests pyalpm --noconfirm --needed
-curl -o PKGBUILD https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=expac-git
-makepkg PKGBUILD --skippgpcheck --syncdeps --install --noconfirm --needed
+sudo pacman -Sy binutils make gcc fakeroot pkg-config git python python-feedparser python-dateutil python-regex python-requests pyalpm expac pigz --noconfirm --needed
 curl -o PKGBUILD https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=aurman
 makepkg PKGBUILD --skippgpcheck --syncdeps --install --noconfirm --needed
 rm -rf aurman_install
@@ -55,6 +53,9 @@ then
 cat << EOM > /etc/sudoers.d/tempSudo
 $ADMIN_USERNAME ALL=(ALL) NOPASSWD:ALL
 EOM
+sed -i -e 's/CFLAGS="-march=x86-64 -mtune=generic -O2 -pipe -fno-plt"/CFLAGS="-march=native -mtune=generic -O2 -pipe -fno-plt"/g' /etc/makepkg.conf
+sed -i -e 's/COMPRESSGZ=(gzip -c -f -n)/COMPRESSGZ=(pigz -c -f -n)/g' /etc/makepkg.conf
+sed -i -e 's/COMPRESSXZ=(xz -c -z -)/COMPRESSXZ=(xz -c -z - --threads=0)/g' /etc/makepkg.conf
 aurman -Sy $EXTRAAPPS --noconfirm --needed
 else
 pacman -Sy $EXTRAAPPS --noconfirm --needed

@@ -26,11 +26,17 @@ EOM
 cat << EOM >> /etc/pacman.conf
 [multilib]
 Include = /etc/pacman.d/mirrorlist
+EOM
 
+if [ "$CONFIGURE_ACM_PACMAN_REPO" -eq "1" ]
+then
+cat << EOM >> /etc/pacman.conf
 [uicacm]
 SigLevel = Optional TrustAll
 Server = http://bharat.acm.cs/acm-packages/archlinux/
 EOM
+pacman -Syy
+fi
 
 # Configure ssh server
 echo "X11Forwarding yes" >> /etc/ssh/sshd_config

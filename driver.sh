@@ -59,21 +59,27 @@ done
 # Write master config file
 echo "" > master.env
 cat $SECRETS >> master.env
-echo 1
+echo "" >> master.env
 cat $GLOBAL >> master.env
-echo 2
+echo "" >> master.env
 cat $PROFILE >> master.env
-echo 3
+echo "" >> master.env
 
+echo > master.sh
+cat functions/*.sh  >> master.sh
+
+
+echo "Transferring config files to remote host"
 # Transfer master config and functions to remote host
-scp master.env root@$SSH_HOST:/root/
-scp -r functions root@$SSH_HOST:/root/
+scp -r master.env master.sh functions/chroot-functions root@$SSH_HOST:/root/
+# scp -r functions root@$SSH_HOST:/root/
 
+echo "Running script on remote host"
 # Run install script on remote host
 ssh root@$SSH_HOST -i "$SSH_KEY" < archinstall-acm.sh
 
 # Remove master.env
-rm master.env
+rm master.env master.sh
 
 echo -e "\n\n\nScript Ended\n\n\n"
 exit

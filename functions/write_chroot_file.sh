@@ -4,7 +4,8 @@ function write_chroot_file {
 # Overwrite old setup file (if exists)
 echo "" > /mnt/setup.sh
 
-# Append all chroot functions
+# Append all chroot functions and variables
+cat master.env >> /mnt/setup.sh
 cat chroot-functions/*.sh >> /mnt/setup.sh
 
 # Run chroot-functions
