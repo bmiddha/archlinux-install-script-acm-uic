@@ -22,9 +22,10 @@ Then run `driver.sh` from a computer on the network.
 # Usage
 
 ```
-Usage: driver.sh --config <config> --host <ip/hostname>
-      -c, --config            specify config file
+Usage: driver.sh --profile <profile> --host <ip/hostname>
+      -p, --profile           specify profile file
       -h, --host              specify host
+      -k, --key               ssh key file
       --help                  Displays Help Information
 Example: driver.sh --config config/virtual-machine.env --host computer.example.com
 ```
