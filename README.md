@@ -79,3 +79,8 @@ Here is an outline of the workings of the script
 systemctl enable sshd
 echo "root:superPASSWORD" | chpasswd
 ```
+`efiboot/loader/loader.conf`
+```
+timeout 0
+default archiso-x86_64
+```
