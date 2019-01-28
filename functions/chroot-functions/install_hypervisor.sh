@@ -8,7 +8,7 @@ then
 fi
 
 # Install dependencies and the hypervisor
-pacman -Sy qemu dnsmasq iptables vde2 bridge-utils openbsd-netcat iptables ebtables dhcp openssl dmidecode ovmf --noconfirm --needed
+pacman -Sy qemu dnsmasq libvirt iptables vde2 bridge-utils openbsd-netcat iptables ebtables dhcp openssl dmidecode ovmf --noconfirm --needed
 
 # Configure virual network
 cat << EOM > /root/acm_virt.xml
