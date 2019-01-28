@@ -2,7 +2,7 @@
 function base_install {
 
 # Set pacman mirror
-echo -e "Server = $MIRROR\nServer = "'https://mirrors.lug.mtu.edu/archlinux/$repo/os/$arch' | cat - /etc/pacman.d/mirrorlist > temp && mv temp /etc/pacman.d/mirrorlist
+echo -e "Server = $MIRROR\nServer = $MIRROR2" | cat - /etc/pacman.d/mirrorlist > temp && mv temp /etc/pacman.d/mirrorlist
 # Update package list
 pacman -Syy
 

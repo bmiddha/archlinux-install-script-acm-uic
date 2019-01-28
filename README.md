@@ -40,7 +40,7 @@ Here is an outline of the workings of the script
 - Login into remote host
 - Partition, format, and mount
 - Install archlinux
-  - Inject local and LUG@MTU archlinux mirror
+  - Inject mirrors
   - Update repository lists
   - Run pacstrap
   - Generate fstab
