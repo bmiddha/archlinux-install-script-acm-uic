@@ -67,7 +67,7 @@ Here is an outline of the workings of the script
     - Configure UEFI for qemu
     - Install virtio drivers for Windows guests
   - Install apps
-    - Install and configure aurman
+    - Install and configure yay
     - Optimize makepkg
     - Install extra apps from config files
   - Install Bootloader
