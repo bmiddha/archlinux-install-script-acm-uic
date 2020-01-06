@@ -10,7 +10,7 @@ pacman -Syy
 timedatectl set-ntp true
 
 # Install archlinux
-pacstrap /mnt base base-devel grub os-prober $BOOTLOADER_UEFI_PACKAGES ntfs-3g exfat-utils git vim tmux wget curl nfs-utils openssh intel-ucode bash-completion
+pacstrap /mnt base linux linux-firmware base-devel grub os-prober $BOOTLOADER_UEFI_PACKAGES ntfs-3g exfat-utils git vim tmux wget curl nfs-utils openssh intel-ucode bash-completion
 
 # Generate fstab file
 genfstab -U /mnt >> /mnt/etc/fstab
